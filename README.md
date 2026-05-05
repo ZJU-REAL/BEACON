@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.png" alt="BEACON logo" width="120">
+</p>
+
 <h2 align="center">BEACON: Milestone-Guided Policy Learning for Long-Horizon Language Agents</h2>
 
 <p align="center">
