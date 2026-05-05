@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="BEACON: Milestone-Guided Policy Learning for Long-Horizon Language Agents — a reinforcement-learning framework that exploits the compositional structure of long-horizon tasks via milestone-anchored credit assignment.">
+  <meta property="og:title" content="BEACON: Milestone-Guided Policy Learning for Long-Horizon Language Agents"/>
+  <meta property="og:description" content="A milestone-guided policy learning framework that addresses credit misattribution and sample inefficiency in long-horizon language-agent RL."/>
+  <meta property="og:url" content="https://zju-real.github.io/BEACON/"/>
+  <meta property="og:image" content="static/images/overview.png"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta name="twitter:title" content="BEACON: Milestone-Guided Policy Learning for Long-Horizon Language Agents">
+  <meta name="twitter:description" content="A milestone-guided policy learning framework for long-horizon language agents.">
+  <meta name="twitter:image" content="static/images/overview.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="keywords" content="long-horizon, language agent, reinforcement learning, credit assignment, milestone, policy optimization, ALFWorld, WebShop, ScienceWorld">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>BEACON: Milestone-Guided Policy Learning for Long-Horizon Language Agents</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <!-- MathJax for inline math -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+  <script defer src="static/js/carousel.js"></script>
+</head>
+
+<body>
+
+<!-- ========== Title / Authors / Links ========== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <h1 class="title is-2 publication-title">BEACON</h1>
+      <h2 class="subtitle is-4 publication-subtitle">
+        Milestone-Guided Policy Learning for Long-Horizon Language Agents
+      </h2>
+
+      <div class="is-size-5 publication-authors">
+        <span class="author-block">Zixuan Wang<sup>1,2</sup>,</span>
+        <span class="author-block">Yuchen Yan<sup>1</sup>,</span>
+        <span class="author-block">Hongxing Li<sup>1</sup>,</span>
+        <span class="author-block">Teng Pan<sup>1,2</sup>,</span>
+        <span class="author-block">Dingming Li<sup>1</sup>,</span>
+        <span class="author-block">Ruiqing Zhang<sup>2</sup>,</span><br>
+        <span class="author-block">Weiming Lu<sup>1</sup>,</span>
+        <span class="author-block">Jun Xiao<sup>1</sup>,</span>
+        <span class="author-block">Yueting Zhuang<sup>1</sup>,</span>
+        <span class="author-block">Yongliang Shen<sup>1†</sup></span>
+      </div>
+
+      <div class="is-size-5 publication-authors" style="margin-top: 0.5em;">
+        <span class="author-block"><sup>1</sup>Zhejiang University,</span>
+        <span class="author-block"><sup>2</sup>Baidu Inc.</span>
+      </div>
+      <div class="is-size-6" style="margin-top: 0.3em; color: #666;">
+        <sup>†</sup>Corresponding author: <a href="mailto:syl@zju.edu.cn">syl@zju.edu.cn</a>
+      </div>
+      <div class="is-size-6 publication-venue" style="margin-top: 0.6em; color: #888; letter-spacing: 0.06em;">
+        Preprint &middot; 2026
+      </div>
+
+      <div class="publication-links" style="margin-top: 1.6em;">
+        <span class="link-block">
+          <a href="#" class="external-link button is-normal is-rounded is-dark is-disabled" style="opacity:.55; cursor: not-allowed;" title="Coming soon">
+            <span class="icon"><i class="fas fa-file-pdf"></i></span>
+            <span>Paper (soon)</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a href="#" class="external-link button is-normal is-rounded is-dark is-disabled" style="opacity:.55; cursor: not-allowed;" title="Coming soon">
+            <span class="icon"><i class="ai ai-arxiv"></i></span>
+            <span>arXiv (soon)</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a href="https://github.com/ZJU-REAL/BEACON" class="external-link button is-normal is-rounded is-dark">
+            <span class="icon"><i class="fab fa-github"></i></span>
+            <span>Code</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a href="#bibtex" class="external-link button is-normal is-rounded is-dark">
+            <span class="icon"><i class="fas fa-quote-left"></i></span>
+            <span>BibTeX</span>
+          </a>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== Teaser ========== -->
+<section class="section teaser">
+  <div class="container is-max-desktop has-text-centered">
+    <img src="static/images/overview.png" alt="BEACON overview" class="teaser-img">
+    <p class="caption">
+      <strong>BEACON.</strong> GRPO assigns uniform credit from terminal outcomes, penalizing correct early actions when later actions fail.
+      BEACON partitions trajectories at milestones and estimates advantages at dual scales, isolating local action quality from later-segment variance.
+    </p>
+  </div>
+</section>
+
+<!-- ========== Abstract ========== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Abstract</h2>
+    <div class="content has-text-justified">
+      <p>
+        While long-horizon agentic tasks require language agents to perform dozens of sequential decisions,
+        training such agents with reinforcement learning remains challenging.
+        We identify two root causes: <em>credit misattribution</em>, where correct early actions are penalized due to terminal failures,
+        and <em>sample inefficiency</em>, where scarce successful trajectories result in near-total loss of learning signal.
+      </p>
+      <p>
+        We introduce a milestone-guided policy learning framework, <strong>BEACON</strong>,
+        that leverages the compositional structure of long-horizon tasks to ensure precise credit assignment.
+        BEACON partitions trajectories at milestone boundaries, applies temporal reward shaping within segments to credit partial progress,
+        and estimates advantages at dual scales to prevent distant failures from corrupting the evaluation of local actions.
+      </p>
+      <p>
+        On ALFWorld, WebShop, and ScienceWorld, BEACON consistently outperforms GRPO and GiGPO.
+        Notably, on long-horizon ALFWorld tasks, BEACON achieves <strong>92.9%</strong> success rate, nearly doubling GRPO's 53.5%,
+        while improving effective sample utilization from 23.7% to 82.0%.
+        These results establish milestone-anchored credit assignment as an effective paradigm for training long-horizon language agents.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== Highlights ========== -->
+<section class="section" style="padding-top: 0;">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Highlights</h2>
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="highlight-card">
+          <div class="highlight-number">92.9%</div>
+          <div class="highlight-text">on ALFWorld <strong>Long</strong> tasks (vs. 53.5% for GRPO).</div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="highlight-card">
+          <div class="highlight-number">23.7% → 82.0%</div>
+          <div class="highlight-text">effective sample utilization, recovering signal from partial successes.</div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="highlight-card">
+          <div class="highlight-number">+26.2% → +73.6%</div>
+          <div class="highlight-text">relative gains over GRPO scale with task horizon (Short → Long).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== Method ========== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Method</h2>
+
+    <div class="has-text-centered" style="margin-bottom: 1.4em;">
+      <img src="static/images/method.png" alt="BEACON framework" style="width: 96%;">
+      <p class="caption">
+        <strong>The BEACON framework.</strong> <em>Top:</em> trajectory partitioning at milestone boundaries with temporal reward decay (factor γ).
+        <em>Bottom:</em> dual-scale advantage estimation combining trajectory-level and segment-level signals.
+      </p>
+    </div>
+
+    <div class="content has-text-justified">
+      <p>BEACON operates in three stages:</p>
+      <ol>
+        <li>
+          <strong>Trajectory partitioning.</strong>
+          A milestone indicator <em>Φ</em> identifies verifiable subgoal-completion transitions and splits each trajectory into segments at milestone boundaries.
+          <em>Φ</em> is environment-defined and requires no learned model:
+          ALFWorld uses object/state predicates, WebShop uses page-transition phases,
+          ScienceWorld exposes <code>subgoal_completed</code> directly.
+        </li>
+        <li>
+          <strong>Temporal reward shaping.</strong>
+          Within each completed segment, actions receive shaped reward
+          $r_t = R_{\text{ms}} \cdot \gamma^{\,t_k - t}$,
+          assigning graduated positive credit to actions leading up to a milestone and converting partial successes into learning signal.
+        </li>
+        <li>
+          <strong>Dual-scale advantage estimation.</strong>
+          The trajectory-level advantage (GRPO-style) captures global task performance;
+          the segment-level advantage compares only among trajectories that reached the same milestone, isolating local action quality from variance in later segments.
+          The two are combined as $\hat{A}_{i,t} = A^{\text{traj}}_i + \lambda \cdot A^{\text{seg}}_{i,t}$.
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ========== Main Results ========== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Main Results</h2>
+    <div class="has-text-centered">
+      <img src="static/images/main_results.png" alt="Main results" style="width: 86%; max-width: 960px;">
+      <p class="caption">
+        BEACON outperforms GRPO and GiGPO across <strong>ALFWorld</strong>, <strong>ScienceWorld</strong>, and <strong>WebShop</strong> at both 1.5B and 7B scales,
+        using a single set of hyperparameters across all benchmarks.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== Analysis ========== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Analysis</h2>
+
+    <div class="carousel" data-carousel aria-label="Analysis figures carousel">
+      <button class="carousel-prev" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
+      <button class="carousel-next" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>
+
+      <div class="carousel-track">
+        <div class="carousel-slide is-active">
+          <img src="static/images/sample_efficiency.png" alt="Sample efficiency">
+          <p class="caption">
+            <strong>Sample Efficiency.</strong> Trajectory distribution during training on ALFWorld.
+            BEACON converts partial successes (orange) into learning signal, lifting effective sample utilization from 23.7% (GRPO) to 82.0%.
+          </p>
+        </div>
+
+        <div class="carousel-slide">
+          <img src="static/images/horizon_scaling.png" alt="Horizon scaling and learning signal">
+          <p class="caption">
+            <strong>Learning Signal &amp; Horizon Scaling.</strong>
+            (a) Zero-Advantage Ratio drops from ~55% (GRPO) to ~10% (BEACON).
+            (b) Relative gains over GRPO scale with task horizon — +14% on Short to +39% on Long for BEACON, while GiGPO plateaus.
+          </p>
+        </div>
+
+        <div class="carousel-slide">
+          <img src="static/images/ccr_oracle.png" alt="Credit concentration and beyond behavior cloning">
+          <p class="caption">
+            <strong>Credit Distribution &amp; Beyond Behavior Cloning.</strong>
+            (a) Despite the lowest Credit Concentration Ratio (0.84), BEACON achieves the best performance — preserving graduated credit beats aggressive milestone-only emphasis.
+            (b) BEACON reaches 91.4% vs. 43% for SFT on oracle trajectories — gains stem from policy optimization, not milestone imitation.
+          </p>
+        </div>
+
+        <div class="carousel-slide">
+          <img src="static/images/training_dynamics.png" alt="Training dynamics">
+          <p class="caption">
+            <strong>Training Dynamics.</strong>
+            BEACON reaches 60% success by iteration 50 — GRPO needs iteration 120 for the same level.
+            Policy entropy decreases smoothly under BEACON, indicating stable refinement from consistent milestone feedback.
+          </p>
+        </div>
+
+        <div class="carousel-slide">
+          <img src="static/images/case_study.png" alt="Case study">
+          <p class="caption">
+            <strong>Per-Action Credit Assignment.</strong>
+            GRPO assigns uniform credit; GiGPO produces counterintuitive signs from state-based grouping;
+            BEACON credits milestones and penalizes errors and detours.
+          </p>
+        </div>
+      </div>
+
+      <div class="carousel-dots">
+        <button class="carousel-dot is-active" aria-label="Go to slide 1"></button>
+        <button class="carousel-dot" aria-label="Go to slide 2"></button>
+        <button class="carousel-dot" aria-label="Go to slide 3"></button>
+        <button class="carousel-dot" aria-label="Go to slide 4"></button>
+        <button class="carousel-dot" aria-label="Go to slide 5"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BibTeX ========== -->
+<section class="section" id="bibtex">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">BibTeX</h2>
+    <div class="content">
+      <p class="has-text-centered" style="color: #666;">
+        Citation will be available once the paper is posted.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== Footer ========== -->
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p style="font-size: 0.9em; color: #666;">
+        Page template adapted from
+        <a href="https://nerfies.github.io" target="_blank">Nerfies</a>.
+        Source code is licensed under
+        <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC-BY-SA-4.0</a>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
