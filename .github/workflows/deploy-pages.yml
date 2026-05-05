@@ -3,7 +3,7 @@ name: Deploy Static Site to Pages
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main"]
     paths: ["pages/**", ".github/workflows/deploy-pages.yml"]
   workflow_dispatch:
 
